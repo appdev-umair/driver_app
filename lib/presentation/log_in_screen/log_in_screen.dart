@@ -1,3 +1,4 @@
+import 'package:driver_app/presentation/form_screen/form_screen.dart';
 import 'package:driver_app/services/login_service.dart';
 import 'package:flutter/material.dart';
 import 'package:driver_app/core/app_export.dart';
@@ -24,7 +25,7 @@ class _LogInScreenState extends State<LogInScreen> {
     }
 
     // Call the login method from ApiService
-    final bool loggedIn = await ApiService.login(phone, password);
+    final bool loggedIn = await LogInService.login(phone, password);
 
     if (loggedIn) {
       // If login is successful, navigate to the next screen
@@ -106,7 +107,7 @@ class _LogInScreenState extends State<LogInScreen> {
                 Navigator.pushReplacement(
                   context,
                   PageTransition(
-                      child: const SignUpScreen(),
+                      child: const FormScreen(),
                       type: PageTransitionType.bottomToTop),
                 );
               },
