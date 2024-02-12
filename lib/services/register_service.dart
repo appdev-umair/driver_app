@@ -35,11 +35,9 @@ class RegistrationService {
     try {
       var dio = Dio();
       FilePickerResult? result = await FilePicker.platform.pickFiles();
-        print("object");
-        print(result);
+      
       if (result != null) {
         Uint8List? bytes = result.files.single.bytes;
-
         String fileName = result.files.single.name;
 
         // Get MIME type using the mime_type package
@@ -61,7 +59,6 @@ class RegistrationService {
             });
 
             var response = await dio.post(registerUrl, data: data);
-            print(response);
           }
         } else {
           print("Error: Could not determine MIME type of the file.");

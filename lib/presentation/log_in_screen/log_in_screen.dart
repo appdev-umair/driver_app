@@ -104,7 +104,7 @@ class _LogInScreenState extends State<LogInScreen> {
             const SizedBox(height: 20.0),
             OutlinedButton(
               onPressed: () {
-                Navigator.pushReplacement(
+                Navigator.push(
                   context,
                   PageTransition(
                       child: const FormScreen(),

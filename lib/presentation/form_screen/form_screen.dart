@@ -13,36 +13,36 @@ class FormScreen extends StatefulWidget {
 
 class _FormScreenState extends State<FormScreen> {
   final _formKey = GlobalKey<FormState>();
-  TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
-  TextEditingController nameController = TextEditingController();
+  TextEditingController dobController = TextEditingController();
   TextEditingController ssnController = TextEditingController();
   DateTime selectedDate = DateTime.now();
-  late String firstName;
-  late String middleName;
-  late String lastName;
-  late String phone;
-  late String dob;
-  late String role;
-  late String address;
-  late String city;
-  late String zipCode;
-  late String licenseNumber;
+  String firstName = "";
+  String middleName = "";
+  String lastName = "";
+  String phone = "";
+  String dob = "";
+  String role = "";
+  String address = "";
+  String city = "";
+  String zipCode = "";
+  String licenseNumber = "";
 
   Future<void> _register() async {
     {
       _formKey.currentState!.save();
       // Call the register method from ApiService
       final bool registered = await RegistrationService.register(
-        firstName: "Umair",
-        lastName: "Ali",
-        phone: "+923261158573",
-        socialSecurity: "111-22-2222",
-        licenseNumber: "LIC123",
-        dob: "1997-07-27T15:41:13.311Z",
-        password: "123456789",
-        role: "Driver",
-        address: "Gujrat, Punjab, Pakistan",
+        firstName: "$firstName $middleName",
+        lastName: lastName,
+        phone: phone,
+        socialSecurity: ssnController.text.trim(),
+        licenseNumber: licenseNumber,
+        dob: dob,
+        password: _passwordController.text.trim(),
+        role: role,
+        address: address,
       );
 
       if (registered) {
@@ -63,24 +63,24 @@ class _FormScreenState extends State<FormScreen> {
 
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
-      context: context,
-      initialDate: selectedDate,
-      firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
-    );
+        context: context,
+        initialDate: selectedDate,
+        firstDate: DateTime(2015, 8),
+        lastDate: DateTime(2101));
     if (picked != null && picked != selectedDate) {
       setState(() {
         selectedDate = picked;
-        nameController.text = selectedDate.toString().split(" ")[0];
+        dobController.text =
+            selectedDate.toString().split(" ")[0].replaceAll("-", "/");
       });
     }
   }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         forceMaterialTransparency: true,
+        title: const Text("Sign Up"),
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -146,6 +146,7 @@ class _FormScreenState extends State<FormScreen> {
                 ),
                 // Date Picker Button and Field
                 TextFormField(
+                  controller: dobController,
                   validator: (value) =>
                       value!.isEmpty ? "DOB is required" : null,
                   decoration: InputDecoration(
@@ -168,7 +169,6 @@ class _FormScreenState extends State<FormScreen> {
                   controller: _passwordController,
                   decoration: InputDecoration(
                     labelText: 'Password',
-                    prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
                       icon: Icon(
                         _obscurePassword
