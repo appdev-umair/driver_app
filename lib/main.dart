@@ -1,25 +1,39 @@
-import 'package:driver_app/core/app_export.dart';
+import 'package:driver_app/presentation/lead_screen/lead_screen.dart';
+import 'package:driver_app/presentation/log_in_screen/log_in_screen.dart';
+import 'package:driver_app/theme/theme.dart';
 import 'package:flutter/material.dart';
 
+import 'package:shared_preferences/shared_preferences.dart';
+
 void main() {
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color.fromARGB(255, 35, 148, 193)),
-        useMaterial3: true,
+      theme: AppTheme.lightTheme,
+      title: 'Your App',
+      home: FutureBuilder<bool>(
+        future: _checkLoginStatus(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          }
+          if (snapshot.data == true) {
+            return const LeadScreen();
+          } else {
+            return const LogInScreen();
+          }
+        },
       ),
-      initialRoute: AppRoutes.initialRoute,
-      routes: AppRoutes.routes,
     );
+  }
+
+  Future<bool> _checkLoginStatus() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    return prefs.getBool('isLoggedIn') ?? false;
   }
 }

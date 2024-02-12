@@ -2,6 +2,7 @@ import 'package:driver_app/presentation/form_screen/form_screen.dart';
 import 'package:driver_app/services/login_service.dart';
 import 'package:flutter/material.dart';
 import 'package:driver_app/core/app_export.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class LogInScreen extends StatefulWidget {
   const LogInScreen({Key? key}) : super(key: key);
@@ -38,7 +39,9 @@ class _LogInScreenState extends State<LogInScreen> {
     }
   }
 
-  void _finishLogin() {
+  void _finishLogin() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setBool('isLoggedIn', true);
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const LeadScreen()),

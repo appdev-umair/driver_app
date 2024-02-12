@@ -1,8 +1,9 @@
+import 'package:driver_app/core/app_export.dart';
 import 'package:driver_app/services/register_service.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:driver_app/core/utils/formatters.dart';
-import 'package:driver_app/presentation/lead_screen/lead_screen.dart';
 
 class FormScreen extends StatefulWidget {
   const FormScreen({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class _FormScreenState extends State<FormScreen> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
+  bool _isFileUploaded = false;
   TextEditingController dobController = TextEditingController();
   TextEditingController ssnController = TextEditingController();
   DateTime selectedDate = DateTime.now();
@@ -28,37 +30,52 @@ class _FormScreenState extends State<FormScreen> {
   String city = "";
   String zipCode = "";
   String licenseNumber = "";
+  FilePickerResult? fileData;
+
+  String fileName = "";
 
   Future<void> _register() async {
     {
-      _formKey.currentState!.save();
-      // Call the register method from ApiService
-      final bool registered = await RegistrationService.register(
-        firstName: "$firstName $middleName",
-        lastName: lastName,
-        phone: phone,
-        socialSecurity: ssnController.text.trim(),
-        licenseNumber: licenseNumber,
-        dob: dob,
-        password: _passwordController.text.trim(),
-        role: role,
-        address: address,
-      );
-
-      if (registered) {
-        // If registration is successful, navigate to the next screen
-        Navigator.pushAndRemoveUntil(
-          context,
-          MaterialPageRoute(builder: (context) => const LeadScreen()),
-          (route) => false,
-        );
-      } else {
-        // If registration fails, show an error message
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Registration failed. Please try again.')),
-        );
+      if (_formKey.currentState!.validate()) {
+        if (_isFileUploaded) {
+          _formKey.currentState!.save();
+          // Call the register method from ApiService
+          final bool registered = await RegistrationService.register(
+              firstName: "$firstName $middleName",
+              lastName: lastName,
+              phone: phone,
+              socialSecurity: ssnController.text.trim(),
+              licenseNumber: licenseNumber,
+              dob: dob,
+              password: _passwordController.text.trim(),
+              role: role,
+              address: address,
+              fileData: fileData,
+              fileName: fileName);
+          if (registered) {
+            _navigateToLoginScreen();
+          } else {
+            _displaySnackBar("Registration failed. Please try again.");
+          }
+        } else {
+          _displaySnackBar("Please Upload Driving License");
+        }
       }
     }
+  }
+
+  _displaySnackBar(String msg) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(msg)),
+    );
+  }
+
+  _navigateToLoginScreen() {
+    Navigator.pushAndRemoveUntil(
+        context,
+        PageTransition(
+            child: const LogInScreen(), type: PageTransitionType.fade),
+        (route) => false);
   }
 
   Future<void> _selectDate(BuildContext context) async {
@@ -75,6 +92,7 @@ class _FormScreenState extends State<FormScreen> {
       });
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -203,16 +221,19 @@ class _FormScreenState extends State<FormScreen> {
                   onSaved: (value) => address = value!,
                 ),
 
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
 
                 Row(
                   children: [
-                    const Text("Upload Document: "),
+                    const Text("Driving License: "),
                     TextButton.icon(
                       onPressed: () => _pickDocument(),
-                      icon: const Icon(Icons.upload_file),
-                      label: const Text("Select Document"),
+                      icon: Icon(_isFileUploaded ? Icons.done : Icons.upload),
+                      label:
+                          Text(_isFileUploaded ? "Uploaded " : "Select File"),
                     ),
+                    const Spacer(),
+                    Text(fileName),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -231,8 +252,13 @@ class _FormScreenState extends State<FormScreen> {
   }
 
   _pickDocument() async {
-    // Use file_picker or image_picker to handle document selection
-    // Store the selected file data or path somewhere appropriate
-    setState(() {});
+    fileData = await FilePicker.platform.pickFiles();
+    if (fileData != null) {
+      setState(() {
+        fileName = fileData!.files.single.name;
+
+        _isFileUploaded = true;
+      });
+    }
   }
 }
