@@ -1,5 +1,4 @@
 import 'package:driver_app/core/app_export.dart';
-import 'package:flutter/material.dart';
 
 class AppRoutes {
 
@@ -12,7 +11,6 @@ class AppRoutes {
   static const String initialRoute = '/initialRoute';
 
   static Map<String, WidgetBuilder> get routes => {
-        signUpScreen: (context) => const SignUpScreen(),
         logInScreen: (context) => const LogInScreen(),
         leadScreen: (context) =>  const LeadScreen(),
         initialRoute: (context) => const LogInScreen(),

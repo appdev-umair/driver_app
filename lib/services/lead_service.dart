@@ -72,6 +72,7 @@ class LeadsService {
     String? token = await _getToken();
 
     try {
+      print("object");
       final http.Response response = await http.patch(
         Uri.parse(markCompletedUrl),
         headers: {
@@ -80,7 +81,7 @@ class LeadsService {
         },
         body: jsonEncode({'leadId': leadId}),
       );
-
+      print(response.body);
       if (response.statusCode == 200) {
         // Lead marked as completed successfully
         return true;

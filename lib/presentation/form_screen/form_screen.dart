@@ -1,3 +1,4 @@
+import 'package:animate_gradient/animate_gradient.dart';
 import 'package:driver_app/core/app_export.dart';
 import 'package:driver_app/services/register_service.dart';
 import 'package:file_picker/file_picker.dart';
@@ -95,155 +96,216 @@ class _FormScreenState extends State<FormScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        forceMaterialTransparency: true,
-        title: const Text("Sign Up"),
-      ),
-      body: Center(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 30),
-          child: Form(
-            autovalidateMode: AutovalidateMode.disabled,
-            key: _formKey,
-            child: Column(
-              children: [
-                // TextFields for names
-                TextFormField(
-                  validator: (value) =>
-                      value!.isEmpty ? "First Name is required" : null,
-                  decoration: const InputDecoration(labelText: "First Name"),
-                  onSaved: (value) => firstName = value!,
-                ),
-                TextFormField(
-                  decoration: const InputDecoration(
-                      labelText: "Middle Name (Optional)"),
-                  onSaved: (value) => middleName = value!,
-                ),
-                TextFormField(
-                  validator: (value) =>
-                      value!.isEmpty ? "Last Name is required" : null,
-                  decoration: const InputDecoration(labelText: "Last Name"),
-                  onSaved: (value) => lastName = value!,
-                ),
-                // Social and Driver Number
-                TextFormField(
-                  controller: ssnController,
-                  decoration: const InputDecoration(
-                      labelText: 'Social Security Number'),
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(9),
-                    SSNFormatter(),
-                  ],
-                ),
-                TextFormField(
-                  decoration:
-                      const InputDecoration(labelText: 'Driver License Number'),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'[a-zA-Z0-9]'),
-                    ),
-                    LengthLimitingTextInputFormatter(12),
-                  ],
-                  validator: (value) {
-                    if (value!.isEmpty) {
-                      return 'Please enter your driver license number';
-                    }
-                    return null;
-                  },
-                  onSaved: (value) => licenseNumber = value!,
-                ),
-                TextFormField(
-                  validator: (value) =>
-                      value!.isEmpty ? "Phone is required" : null,
-                  decoration: const InputDecoration(labelText: "Phone"),
-                  onSaved: (value) => phone = value!,
-                  keyboardType: TextInputType.phone,
-                ),
-                // Date Picker Button and Field
-                TextFormField(
-                  controller: dobController,
-                  validator: (value) =>
-                      value!.isEmpty ? "DOB is required" : null,
-                  decoration: InputDecoration(
-                    labelText: "Date of Birth",
-                    suffixIcon: IconButton(
-                      onPressed: () => _selectDate(context),
-                      icon: const Icon(Icons.calendar_today),
-                    ),
+    return AnimateGradient(
+      primaryColors: const [
+        Color.fromARGB(255, 31, 76, 151),
+        Color.fromARGB(255, 39, 153, 189),
+      ],
+      secondaryColors: const [
+        Color.fromARGB(255, 140, 0, 206),
+        Color.fromARGB(255, 138, 203, 255),
+      ],
+      child: Scaffold(
+        extendBodyBehindAppBar: true,
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          forceMaterialTransparency: true,
+          title: const Text("Sign Up",
+              style: TextStyle(fontWeight: FontWeight.bold)),
+          foregroundColor: Colors.white,
+          backgroundColor: Colors.transparent,
+          elevation: 0.0,
+        ),
+        body: Center(
+          child: SafeArea(
+            child: Container(
+              height: MediaQuery.of(context).size.height * 0.8,
+              width: MediaQuery.of(context).size.width * 0.9,
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(20),
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    offset: const Offset(4, 4),
+                    blurRadius: 4,
                   ),
-                  keyboardType: TextInputType.datetime,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(8),
-                    DateFormater(),
-                  ],
-                  onSaved: (value) => dob = value!,
-                ),
-                // password
-                TextFormField(
-                  controller: _passwordController,
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
-                    ),
-                  ),
-                  obscureText: _obscurePassword,
-                ),
-                // role
-                TextFormField(
-                  validator: (value) =>
-                      value!.isEmpty ? "Role is required" : null,
-                  decoration: const InputDecoration(labelText: "Role"),
-                  onSaved: (value) => role = value!,
-                ),
-
-                // Address Fields
-                TextFormField(
-                  validator: (value) =>
-                      value!.isEmpty ? "Address is required" : null,
-                  keyboardType: TextInputType.streetAddress,
-                  decoration: const InputDecoration(
-                    labelText: "Address",
-                  ),
-                  onSaved: (value) => address = value!,
-                ),
-
-                const SizedBox(height: 20),
-
-                Row(
+                ],
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Form(
+                autovalidateMode: AutovalidateMode.disabled,
+                key: _formKey,
+                child: ListView(
+                  shrinkWrap: true,
                   children: [
-                    const Text("Driving License: "),
-                    TextButton.icon(
-                      onPressed: () => _pickDocument(),
-                      icon: Icon(_isFileUploaded ? Icons.done : Icons.upload),
-                      label:
-                          Text(_isFileUploaded ? "Uploaded " : "Select File"),
+                    const SizedBox(height: 30.0),
+
+                    TextFormField(
+                      validator: (value) =>
+                          value!.isEmpty ? "First Name is required" : null,
+                      decoration:
+                          const InputDecoration(labelText: "First Name"),
+                      onSaved: (value) => firstName = value!,
                     ),
-                    const Spacer(),
-                    Text(fileName),
+                    const SizedBox(height: 10.0),
+
+                    TextFormField(
+                      decoration: const InputDecoration(
+                          labelText: "Middle Name (Optional)"),
+                      onSaved: (value) => middleName = value!,
+                    ),
+                    const SizedBox(height: 10.0),
+
+                    TextFormField(
+                      validator: (value) =>
+                          value!.isEmpty ? "Last Name is required" : null,
+                      decoration: const InputDecoration(labelText: "Last Name"),
+                      onSaved: (value) => lastName = value!,
+                    ),
+                    const SizedBox(height: 10.0),
+
+                    // Social and Driver Number
+                    TextFormField(
+                      controller: ssnController,
+                      decoration: const InputDecoration(
+                          labelText: 'Social Security Number'),
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(9),
+                        SSNFormatter(),
+                      ],
+                    ),
+                    const SizedBox(height: 10.0),
+
+                    TextFormField(
+                      decoration: const InputDecoration(
+                          labelText: 'Driver License Number'),
+                      inputFormatters: [
+                        FilteringTextInputFormatter.allow(
+                          RegExp(r'[a-zA-Z0-9]'),
+                        ),
+                        LengthLimitingTextInputFormatter(12),
+                      ],
+                      validator: (value) {
+                        if (value!.isEmpty) {
+                          return 'Please enter your driver license number';
+                        }
+                        return null;
+                      },
+                      onSaved: (value) => licenseNumber = value!,
+                    ),
+                    const SizedBox(height: 10.0),
+                    TextFormField(
+                      validator: (value) =>
+                          value!.isEmpty ? "Phone is required" : null,
+                      decoration: const InputDecoration(labelText: "Phone"),
+                      onSaved: (value) => phone = value!,
+                      keyboardType: TextInputType.phone,
+                    ),
+                    const SizedBox(height: 10.0),
+                    // Date Picker Button and Field
+                    TextFormField(
+                      controller: dobController,
+                      validator: (value) =>
+                          value!.isEmpty ? "DOB is required" : null,
+                      decoration: InputDecoration(
+                        labelText: "Date of Birth",
+                        suffixIcon: IconButton(
+                          onPressed: () => _selectDate(context),
+                          icon: const Icon(Icons.calendar_today),
+                        ),
+                      ),
+                      keyboardType: TextInputType.datetime,
+                      inputFormatters: [
+                        FilteringTextInputFormatter.digitsOnly,
+                        LengthLimitingTextInputFormatter(8),
+                        DateFormater(),
+                      ],
+                      onSaved: (value) => dob = value!,
+                    ),
+                    const SizedBox(height: 10.0),
+                    // password
+                    TextFormField(
+                      controller: _passwordController,
+                      decoration: InputDecoration(
+                        labelText: 'Password',
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscurePassword
+                                ? Icons.visibility_off
+                                : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscurePassword = !_obscurePassword;
+                            });
+                          },
+                        ),
+                      ),
+                      obscureText: _obscurePassword,
+                    ),
+                    const SizedBox(height: 10.0),
+                    // role
+                    TextFormField(
+                      validator: (value) =>
+                          value!.isEmpty ? "Role is required" : null,
+                      decoration: const InputDecoration(labelText: "Role"),
+                      onSaved: (value) => role = value!,
+                    ),
+                    const SizedBox(height: 10.0),
+
+                    // Address Fields
+                    TextFormField(
+                      validator: (value) =>
+                          value!.isEmpty ? "Address is required" : null,
+                      keyboardType: TextInputType.streetAddress,
+                      decoration: const InputDecoration(
+                        labelText: "Address",
+                      ),
+                      onSaved: (value) => address = value!,
+                    ),
+                    const SizedBox(height: 10.0),
+
+                    const SizedBox(height: 20),
+
+                    Row(
+                      children: [
+                        const Text("Driving License: "),
+                        Spacer(),
+                        TextButton.icon(
+                          onPressed: () => _pickDocument(),
+                          icon:
+                              Icon(_isFileUploaded ? Icons.done : Icons.upload),
+                          label: Text(
+                              _isFileUploaded ? "Uploaded " : "Select File"),
+                        ),
+                      ],
+                    ),
+                    const Align(
+                        alignment: Alignment.topLeft,
+                        child: Text("Uploaded File: ")),
+
+                    Align(
+                      alignment: Alignment.topLeft,
+                      child: Text(fileName.isEmpty ? "No File" : fileName),
+                    ),
+                    const SizedBox(height: 20),
+                    // Submit Button
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFF2394C1)),
+                      onPressed: _register,
+                      child: const Text(
+                        "Submit",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
                   ],
                 ),
-                const SizedBox(height: 40),
-                // Submit Button
-                ElevatedButton(
-                  onPressed: _register,
-                  child: const Text("Submit"),
-                ),
-                const SizedBox(height: 20),
-              ],
+              ),
             ),
           ),
         ),
